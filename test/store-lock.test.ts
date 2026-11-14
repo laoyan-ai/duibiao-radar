@@ -1,0 +1,7 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {mkdtemp,rm,rename,readFile} from 'node:fs/promises';import {tmpdir} from 'node:os';import {join} from 'node:path';import {TaskStore} from '../src/store.js';import {createTask} from '../src/domain.js';
+test('transient Windows replacement lock retries atomically and preserves the saved task',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'task-lock-'));try{let attempts=0;const store=new TaskStore(root,async(a,b)=>{if(++attempts<3)throw Object.assign(Error('文件被临时占用'),{code:'EPERM'});await rename(a,b);});const task=createTask('FDE');await store.save(task);assert.equal(attempts,3);assert.equal((await store.load(task.id))!.keyword,'FDE');}finally{await rm(root,{recursive:true,force:true});}
+});
+test('permanent lock fails within bounds and never deletes or truncates the previous task',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'task-lock-permanent-'));try{const task=createTask('保留原数据'),normal=new TaskStore(root);await normal.save(task);const before=await readFile(join(normal.taskDir(task.id),'task.json'),'utf8');let attempts=0;const locked=new TaskStore(root,async()=>{attempts++;throw Object.assign(Error('持久占用'),{code:'EPERM'});});task.keyword='未写入';await assert.rejects(locked.save(task),/持久占用/);assert.equal(attempts,6);assert.equal(await readFile(join(normal.taskDir(task.id),'task.json'),'utf8'),before);}finally{await rm(root,{recursive:true,force:true});}
+});
