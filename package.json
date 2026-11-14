@@ -1,0 +1,41 @@
+{
+  "name": "duibiao-radar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "tsx --test test/*.test.ts",
+    "check": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "4.0.118",
+    "@ai-sdk/openai-compatible": "3.0.92",
+    "ai": "7.0.173",
+    "openai": "7.56.0",
+    "playwright": "1.65.0",
+    "sharp": "0.35.5",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.6",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "description": "对标雷达：本机运行的抖音博主发现与主页样本评分工具",
+  "license": "MIT",
+  "author": "laoyan-ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laoyan-ai/duibiao-radar.git"
+  },
+  "homepage": "https://github.com/laoyan-ai/duibiao-radar",
+  "bugs": {
+    "url": "https://github.com/laoyan-ai/duibiao-radar/issues"
+  }
+}
