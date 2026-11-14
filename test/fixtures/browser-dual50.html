@@ -1,0 +1,13 @@
+<!doctype html><html><body>
+<button id="filter" onclick="document.querySelector('#options').hidden=false">筛选</button>
+<div id="options" hidden>
+<div role="group" aria-label="排序"><button onclick="choose(this,'sort')">最多点赞</button><button onclick="choose(this,'sort')">综合排序</button><button onclick="throw Error('禁止第三路')">最新发布</button></div>
+<div role="group" aria-label="发布时间"><button onclick="choose(this,'date')">半年内</button></div>
+<div role="group" aria-label="类型"><button onclick="choose(this,'type')">视频</button></div>
+</div>
+<ul id="cards"></ul>
+<script>
+let sort='',date='',type=''; window.actions=[];
+function choose(button,group){for(const x of button.parentElement.children)x.setAttribute('aria-pressed','false');button.setAttribute('aria-pressed','true');window.actions.push(button.textContent);if(group==='sort')sort=button.textContent;if(group==='date')date=button.textContent;if(group==='type')type=button.textContent;render();}
+function render(){if(!sort||!date||!type)return;let html='';for(let i=0;i<55;i++){const id=(sort==='最多点赞'?1000:1040)+i;if(id===1000){html+='<li><a href="/video/1000"><h2>FDE 缺少作者</h2></a></li>';continue;}html+='<li><a href="/video/'+id+'"><h2>FDE '+id+'</h2></a><a href="/user/author-'+id+'">作者'+id+'</a></li>';} html+='<li><a href="/video/999999"><h2>缺少作者</h2></a></li>';document.querySelector('#cards').innerHTML=html;}
+</script></body></html>

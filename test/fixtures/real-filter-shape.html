@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><style>
+body{background:#161823;color:white}#menu[hidden]{display:none}.eXMmo3JR{display:inline-block;padding:8px;color:rgba(255,255,255,.9);font-weight:400}.sDNqBVWH{color:rgb(254,44,85);background:rgba(254,44,85,.1);font-weight:500}.selected{color:rgb(254,44,85)}
+</style><div class="selected" onclick="window.tabClicks++">综合</div><div class="selected" onclick="window.tabClicks++">视频</div><button onclick="window.opens++;document.querySelector('#menu').hidden=false">筛选</button>
+<div id="menu" hidden>
+<div><div>排序依据</div><span data-index1="0" data-index2="0" class="eXMmo3JR sDNqBVWH">综合排序</span><span data-index1="0" data-index2="1" class="eXMmo3JR">最新发布</span><span data-index1="0" data-index2="2" class="eXMmo3JR">最多点赞</span></div>
+<div><div>发布时间</div><span data-index1="1" data-index2="0" class="eXMmo3JR sDNqBVWH">不限</span><span data-index1="1" data-index2="1" class="eXMmo3JR">一天内</span><span data-index1="1" data-index2="2" class="eXMmo3JR">一周内</span><span data-index1="1" data-index2="3" class="eXMmo3JR">半年内</span></div>
+<div><div>内容形式</div><span data-index1="4" data-index2="0" class="eXMmo3JR sDNqBVWH">不限</span><span data-index1="4" data-index2="1" class="eXMmo3JR">视频</span><span data-index1="4" data-index2="2" class="eXMmo3JR">图文</span></div>
+</div><script>window.actions=[];window.tabClicks=0;window.opens=0;window.ignoreDate=0;for(const option of document.querySelectorAll('[data-index1]'))option.onclick=()=>{window.actions.push(option.textContent);if(option.textContent==='半年内'&&window.ignoreDate-- >0)return;for(const peer of option.parentElement.querySelectorAll('span'))peer.classList.remove('sDNqBVWH');option.classList.add('sDNqBVWH');};</script>

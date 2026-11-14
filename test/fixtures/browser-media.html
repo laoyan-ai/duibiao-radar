@@ -1,0 +1,10 @@
+<!doctype html><html><body style="margin:0;background:white"><main><video width="640" height="360" muted controls style="object-fit:contain"></video></main>
+<script>
+const canvas=document.createElement('canvas');canvas.width=640;canvas.height=360;
+const ctx=canvas.getContext('2d');const chunks=[];let tick=0;
+const draw=setInterval(()=>{tick++;ctx.fillStyle=tick<16?'#b71c1c':'#1565c0';ctx.fillRect(0,0,640,360);ctx.fillStyle='white';ctx.font='60px sans-serif';ctx.fillText(String(tick),100,180);},50);
+const recorder=new MediaRecorder(canvas.captureStream(20),{mimeType:'video/webm;codecs=vp8'});
+recorder.ondataavailable=e=>chunks.push(e.data);
+recorder.onstop=()=>{clearInterval(draw);const v=document.querySelector('video');v.onloadedmetadata=()=>{if(!Number.isFinite(v.duration)){v.currentTime=999999;v.onseeked=()=>{v.onseeked=null;v.currentTime=0;};}};v.src=URL.createObjectURL(new Blob(chunks,{type:'video/webm'}));};
+recorder.start();setTimeout(()=>recorder.stop(),1700);
+</script></body></html>
