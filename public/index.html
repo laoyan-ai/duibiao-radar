@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>对标雷达</title>
+  <link rel="icon" type="image/png" href="/brand-logo.png?v=brand-assets-1">
+  <link rel="stylesheet" href="/style.css?v=brand-assets-1">
+  <script src="/app.js?v=brand-assets-1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">跳到研究结果</a>
+  <header class="masthead">
+    <div class="brand"><img class="brand-mark" src="/brand-logo.png?v=brand-assets-1" width="42" height="42" alt="" aria-hidden="true"><div><strong>对标雷达</strong></div></div>
+    <div class="header-actions"><span class="local-label">● 仅本机运行</span><button id="settings-toggle" type="button" aria-expanded="false" aria-controls="settings-panel">API 设置</button></div>
+  </header>
+  <main>
+    <p id="runtime-notice" class="error-banner" role="alert" hidden></p>
+    <section class="intro" aria-labelledby="page-title"><div><h1 id="page-title">输入一个话题，找到相关博主。</h1><p>自动整理相关博主，按内容相关度和点赞表现排名。</p></div><span class="scope-stamp" id="scope-stamp" hidden>前50条视频<br><strong>博主去重</strong></span></section>
+    <p id="api-notice" class="api-notice" role="status" aria-live="polite" hidden></p>
+    <section id="settings-panel" class="panel settings" aria-labelledby="settings-title" hidden>
+      <div class="section-heading"><h2 id="settings-title">API 连接</h2><span id="settings-status" class="badge">未配置</span></div>
+      <p>密钥使用 Windows 当前用户加密保存在本机，重启软件后自动恢复；不回显密钥。测试连接成功后设置区自动收起，点右上角可再次打开。</p>
+      <form id="settings-form" class="settings-grid">
+        <div class="field"><label for="provider">API 厂商</label><select id="provider" name="provider"><option value="openai">OpenAI</option><option value="deepseek">DeepSeek</option><option value="qwen">通义千问</option><option value="doubao">豆包</option><option value="custom">自定义兼容接口</option></select><small>切换厂商只是编辑草稿；保存后才成为新任务默认配置。</small></div>
+        <div class="field"><label for="endpoint-select">API 地址</label><select id="endpoint-select"><option value="https://api.openai.com/v1">官方地址</option></select><div id="address-advanced" hidden><label for="base-url">高级：完整 HTTPS API 地址</label><input id="base-url" name="baseURL" type="url" autocomplete="off" placeholder="https://example.com/v1"></div><small id="api-destination"></small><label id="endpoint-confirmation" class="endpoint-confirmation" hidden><input id="endpoint-confirmed" type="checkbox">我确认此地址可接收我填写的 API 密钥</label></div>
+        <div class="field"><label for="api-key">API Key</label><input id="api-key" name="apiKey" type="password" required autocomplete="off" spellcheck="false" placeholder="首次填写；已保存时留空即可沿用"><small>仅同一厂商及完整地址可留空沿用密钥；切换厂商或地址会清空输入。密钥只提交至本机服务。</small></div>
+        <div class="field"><label for="model">分析模型</label><select id="model" name="model"><option value="gpt-6.1-sol" selected>GPT-6.1 Sol · 默认</option><option value="gpt-5.4-mini">GPT-5.4 mini · 轻量选项</option><option value="gpt-5.4">GPT-5.4</option><option value="custom">其他模型（高级）</option></select><small>模型列表不代表可调用权限。文字测试需先保存配置。</small><div id="custom-model-field" hidden><label for="custom-model">自定义模型名称</label><input id="custom-model" autocomplete="off" maxlength="120" placeholder="填写模型或推理接入点 ID"></div></div>
+        <div class="field model-list-controls"><button id="fetch-models" type="button">获取模型列表</button><small id="model-source">预设模型 · 未验证账号权限</small></div><div class="button-row"><button class="primary" type="submit" id="settings-save">保存设置</button><button id="test-api" type="button">文字连接测试</button><button id="clear-api" type="button">清除此地址密钥</button></div>
+      </form>
+      <p class="notice">相关度与综合评分需要 API；未配置时先按点赞排序。仅配置匹配的等待任务可接续，其他任务需查看状态并继续。文字测试和评分均会产生 API 用量；获取列表不会自动测试或评分。</p>
+      <p id="settings-message" role="status" aria-live="polite"></p>
+    </section>
+    <section class="panel search-panel" aria-label="创建调研任务">
+      <ol class="quick-start" aria-label="使用步骤"><li><span>1</span><button id="open-browser" class="login-button" type="button">打开浏览器 / 登录抖音</button></li><li><span>2</span>输入话题</li><li><span>3</span>查找并排名</li><li><span>4</span>查看评分依据</li></ol>
+      <div class="browser-connection" aria-label="抖音连接状态"><div class="browser-indicators" role="status" aria-live="polite"><span id="browser-status" class="badge">浏览器：待确认</span><span id="login-status" class="badge">抖音：待确认</span></div><button id="refresh-browser-status" type="button">刷新登录状态</button><span id="browser-message" class="helper">打开浏览器后完成登录，状态会自动更新。</span></div>
+      <form id="task-form"><div class="field keyword-field"><label for="keyword">想研究什么话题？</label><input id="keyword" name="keyword" required maxlength="120" placeholder="例如：FDE、企业 AI 服务" autocomplete="off"></div><div class="field" hidden><label for="mode">历史任务口径</label><select id="mode" name="mode"><option value="likes">综合：相关70%＋点赞30%</option></select></div>
+      <div class="field collection-field"><label for="search-limit">搜索视频上限</label><input id="search-limit" name="searchLimit" type="number" min="1" max="200" step="1" value="50" required></div>
+      <div class="field collection-field"><label for="profile-limit">每位主页作品上限</label><input id="profile-limit" name="profileLimit" type="number" min="1" max="30" step="1" value="12" required></div>
+      <div hidden><input id="days" type="hidden" value="180"><div id="custom-days-field" hidden><input id="custom-days" type="hidden" disabled></div></div>
+      <button class="primary start-button" id="start-task" type="submit">查找并排名 <span aria-hidden="true">↗</span></button></form>
+      <p id="scope-estimate" class="scope-summary">搜索前50条 · 每位主页12条 · 最多50位去重作者 × 12条＝600条主页作品；不足按实际记录。数量越大，时间与API用量越多。</p>
+      <p id="start-notice" class="helper" role="status">无API先看点赞排名；综合评分会产生API用量。</p>
+      <details class="research-details"><summary>采集与评分说明</summary><ul><li>按所设上限顺序读取搜索页视频，不操作排序或日期筛选，不限制日期。</li><li>核实并进入作者主页，读取昵称、简介及所设上限内的主页作品标题和点赞（含置顶）；不逐条分析画面。</li><li>相关度依据简介20%＋标题80%；综合分按相关度70%＋点赞30%计算。</li><li>主页读取失败或样本不足会注明，不用搜索样本代替；未配置API时先按点赞排序，保存API后自动补全综合评分并产生用量。</li></ul></details>
+    </section>
+    <p id="error" class="error-banner" role="alert" hidden></p>
+    <div class="workspace" id="workspace">
+      <aside class="sidebar"><section class="panel history"><div class="section-heading"><h2>调研记录</h2><button id="refresh-tasks" class="text-button" type="button">刷新</button></div><div id="task-list"><p class="muted">正在读取本机任务…</p></div></section><details class="panel method-card research-details"><summary>数据范围与限制</summary><p>仅比较本次样本，不代表全站排名。同名账号分别核实，样本不足或资料缺失会注明。</p></details></aside>
+      <div class="results"><section id="task-progress" class="panel progress-panel" aria-labelledby="task-title" hidden><div class="section-heading"><div><span class="eyebrow">当前调研</span><h2 id="task-title"></h2></div><span id="task-status" class="badge"></span></div><p id="task-window" class="muted"></p>
+<section id="run-console" class="run-console" aria-label="任务实时进度" hidden>
+      <div class="run-heading"><div><span id="run-state" class="badge"></span><h2 id="run-stage">准备开始</h2></div><div class="run-controls"><button id="pause-task" type="button">暂停</button><button id="resume-task" type="button">继续 / 重试未完项</button><button id="stop-current" class="stop-button" type="button">■ 停止当前任务</button><button id="task-api-settings" type="button">设置 API</button><button id="cancel-task" type="button">取消任务</button><button id="expand-task" type="button">继续扩展样本</button><button id="score-task" type="button">计算/继续账号评分</button><button id="analyze-task" type="button">分析入选作品</button></div></div>
+      <p id="run-detail" role="status" aria-live="polite"></p><div class="run-meta"><span id="run-count"></span><span id="run-clock"></span></div><progress id="run-progress" aria-label="当前步骤进度"></progress>
+      <ol class="steps run-steps" aria-label="当前执行步骤"><li id="run-step-search">搜索候选</li><li id="run-step-collect">采集作品</li><li id="run-step-rank">账号评分 / 计算排名</li><li id="run-step-sample">画面采样</li><li id="run-step-analyze">AI 分析</li><li id="run-step-summary">汇总报告</li></ol>
+      <ol id="run-events" class="run-events" aria-label="完整执行记录"></ol><p class="helper">停止会中断当前采集或模型请求，关闭软件的独立采集窗口，保留已保存结果；已发出的 API 请求仍可能计费。</p>
+    </section><p id="task-message" hidden></p><div id="coverage-stats" class="stats"></div><div id="rank-controls" class="rank-control"><label id="task-mode-label" for="task-mode">统一重算排名</label><select id="task-mode"><option value="likes">仅点赞（整项任务统一）</option></select><button id="recompute-task" type="button">应用口径</button></div><section id="author-section" class="author-section" aria-labelledby="authors-title" hidden><div class="section-heading"><h2 id="authors-title">博主比较</h2><button id="show-all" class="text-button" type="button">查看全部入选作品</button></div><p id="scoring-method" class="helper">相关分＝简介20%＋标题均值80%；综合分＝相关70%＋点赞30%。缺值不补零；全部候选可按各分数排序查看，不再自动筛选前几名。</p><details class="research-details"><summary>评分规则与样本说明</summary><p id="scoring-details" class="helper"></p></details><div id="authors" class="author-grid"></div></section><details class="task-log-details"><summary>问题与完整执行记录</summary><div id="task-log"></div></details><section id="export-panel" class="export-panel" hidden><div><h2>导出当前调研</h2><p>导出当前快照；部分完成的任务也会保留缺口和限制。</p></div><div class="button-row"><a id="export-md" class="button" href="#">Markdown 报告</a><a id="export-csv" class="button" href="#">CSV 数据</a></div></section></section>
+
+      <section id="report" aria-label="作品研究报告"></section>
+      <section id="summary-panel" class="panel" hidden><span class="eyebrow">跨作品观察</span><h2>共性与可借鉴做法</h2><p id="task-summary" class="pre-line"></p><p class="helper">AI 建议用于创作参考，不能证明高互动的因果，也不能保证复现表现。</p></section>
+      </div>
+    </div>
+    <footer>公开数据以采集时刻为准 · 不足所设上限或作者缺失会明确标记</footer>
+  </main>
+</body>
+</html>
